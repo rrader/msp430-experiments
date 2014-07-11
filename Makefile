@@ -24,3 +24,9 @@ micro: micro.o
 
 blink5: blink5.o
 	mspdebug rf2500 "prog blink5.o"
+
+uart.o: uart.c
+	msp430-gcc -mmcu=msp430g2553 uart.c -o uart.o
+
+uart: uart.o
+	mspdebug rf2500 "prog uart.o"
