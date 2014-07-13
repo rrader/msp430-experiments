@@ -30,3 +30,7 @@ uart.o: uart.c
 
 uart: uart.o
 	mspdebug rf2500 "prog uart.o"
+
+%:
+	msp430-gcc -mmcu=msp430g2553 $@.c -o $@.o
+	mspdebug rf2500 "prog $@.o"
