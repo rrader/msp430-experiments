@@ -3,17 +3,6 @@
 #define A1 BIT1
 #define A6 BIT6
 
-int delay(int t)
-{
-  int i, s;
- 
-  s = 0;
-  for (i = 0; i < t; i++)
-    s += i;
- 
-  return s;
-}
-
 void ADC_init(void) {
             // Используем Vcc/Vss(аналоговая земля) для верхнего/нижнего ИОН,
             // 16 x ADC10CLKs (выборка за 16 тактов), включаем АЦП.
@@ -25,57 +14,73 @@ void ADC_init(void) {
     ADC10CTL0 |= ENC;     // Разрешаем преобразования.
 } // ADC_init
 
-unsigned int pow(unsigned int a) {
-  return a*a;
+char EVENT = 0;
+double avg = 0;
+int norm = 0;
+
+void addValue(int newValue) {
+  if (abs(avg) < 0.001) avg = newValue;
+  avg = avg + 0.001 * (newValue - avg);  // slowly converge to average
+
+  int v = newValue - avg;
+  v = (v>0)?v:-v;
+  norm = norm + 0.1 * (v - norm);
+
+  if (norm >= 8)
+    EVENT = 1;
+  else
+    EVENT = 0;
 }
-
-#define TICKS 500
-
-unsigned int micro = 0;
-unsigned int counter = TICKS;
-unsigned int maxValue = 0;
-unsigned int prev = 0;
-
-int addValue(int newValue) {
-  counter --;
-  if (counter == 0) {
-    micro = maxValue;
-    prev = maxValue;
-    maxValue = newValue;
-    counter = TICKS;
-  }
-  if (maxValue < newValue)
-    maxValue = newValue;
-  // maxValue = 
-}
-
-#define MAX 0xff  // 0xff**2
-#define MIN 0x00
 
 int main(void)
 {
   WDTCTL = WDTPW + WDTHOLD;
-  P1DIR = 0xf9;
+  P1DIR = 0xff;
+  P1OUT = 0;
   ADC_init();
- 
-  int n;
+  unsigned int cntOverall = 0;
+  unsigned int cntBlink = 5;
+  unsigned int cntEvents = 0;
+  char flagEventAccounted = 0;
+
+
+  __delay_cycles(1000);
   while (1)
   {
-    ADC10CTL0 |= ADC10SC;
-    while ((ADC10CTL1 & ADC10BUSY) == 0x01);
-    n = 0x00;
-    addValue(ADC10MEM);
-    if (micro >= MIN)
-      n |= 0x10;
-    if (micro >= MIN + (MAX-MIN)/5)
-      n |= 0x08;
-    if (micro >= MIN + (MAX-MIN)/5*2)
-      n |= 0x80;
-    if (micro >= MIN + (MAX-MIN)/5*3)
-      n |= 0x01;
-    if (micro >= MIN + (MAX-MIN)/5*4)
-      n |= 0x20;
-    P1OUT = n;
+    __delay_cycles(20000);
+    ADC10CTL0 |= ENC + ADC10SC;
+    while (ADC10CTL1 & BUSY);
+    int val = ADC10MEM;
+    ADC10CTL0 &=~ ENC;
+
+    addValue(val);
+    if (EVENT && !flagEventAccounted) {
+      P1OUT |= BIT0;
+      cntBlink = 50;
+      cntEvents ++;  // event counter
+      cntOverall = 100;
+      flagEventAccounted = 1;
+    }
+
+    if (cntBlink == 0) {
+      P1OUT &= ~(BIT0 | BIT7);
+      flagEventAccounted = 0;
+    } else {
+      cntBlink--;
+    }
+
+    if (cntOverall == 0) {
+      cntEvents = 0;
+    } else {
+      cntOverall--;
+    }
+
+    if (cntEvents == 4) {
+      P1OUT |= BIT7;
+      cntEvents = 0;
+      cntBlink = 100;
+      cntOverall = 100;
+    }
   }
 }
 

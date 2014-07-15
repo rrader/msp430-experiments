@@ -1,0 +1,232 @@
+v 20111231 2
+P 0 2900 300 2900 1 0 0
+{
+T 0 2900 5 10 0 0 0 0 1
+pintype=unknown
+T 355 2895 5 10 1 1 0 0 1
+pinlabel=DVCC
+T 205 2945 5 10 1 1 0 6 1
+pinnumber=1
+T 0 2900 5 10 0 0 0 0 1
+pinseq=1
+}
+P 0 2600 300 2600 1 0 0
+{
+T 0 2600 5 10 0 0 0 0 1
+pintype=unknown
+T 355 2595 5 10 1 1 0 0 1
+pinlabel=P1.0/TA0CLK/ACLK/A0/CA0
+T 205 2645 5 10 1 1 0 6 1
+pinnumber=2
+T 0 2600 5 10 0 0 0 0 1
+pinseq=2
+}
+P 0 2300 300 2300 1 0 0
+{
+T 0 2300 5 10 0 0 0 0 1
+pintype=unknown
+T 355 2295 5 10 1 1 0 0 1
+pinlabel=P1.1/TA0.0/A1/CA1
+T 205 2345 5 10 1 1 0 6 1
+pinnumber=3
+T 0 2300 5 10 0 0 0 0 1
+pinseq=3
+}
+P 0 2000 300 2000 1 0 0
+{
+T 0 2000 5 10 0 0 0 0 1
+pintype=unknown
+T 355 1995 5 10 1 1 0 0 1
+pinlabel=P1.2/TA0.1/A2/CA2
+T 205 2045 5 10 1 1 0 6 1
+pinnumber=4
+T 0 2000 5 10 0 0 0 0 1
+pinseq=4
+}
+P 0 1700 300 1700 1 0 0
+{
+T 0 1700 5 10 0 0 0 0 1
+pintype=unknown
+T 355 1695 5 10 1 1 0 0 1
+pinlabel=P1.3/ADC10CLK/CAOUT/VREF-/VEREF-/A3/CA3
+T 205 1745 5 10 1 1 0 6 1
+pinnumber=5
+T 0 1700 5 10 0 0 0 0 1
+pinseq=5
+}
+P 0 1400 300 1400 1 0 0
+{
+T 0 1400 5 10 0 0 0 0 1
+pintype=unknown
+T 355 1395 5 10 1 1 0 0 1
+pinlabel=P1.4/TA0.2/SMCLK/A4/VREF+/VEREF+/CA4/TCK
+T 205 1445 5 10 1 1 0 6 1
+pinnumber=6
+T 0 1400 5 10 0 0 0 0 1
+pinseq=6
+}
+P 0 1100 300 1100 1 0 0
+{
+T 0 1100 5 10 0 0 0 0 1
+pintype=unknown
+T 355 1095 5 10 1 1 0 0 1
+pinlabel=P1.5/TA0.0/SCLK/A5/CA5/TMS
+T 205 1145 5 10 1 1 0 6 1
+pinnumber=7
+T 0 1100 5 10 0 0 0 0 1
+pinseq=7
+}
+P 0 800 300 800 1 0 0
+{
+T 0 800 5 10 0 0 0 0 1
+pintype=unknown
+T 355 795 5 10 1 1 0 0 1
+pinlabel=P2.0
+T 205 845 5 10 1 1 0 6 1
+pinnumber=8
+T 0 800 5 10 0 0 0 0 1
+pinseq=8
+}
+P 0 500 300 500 1 0 0
+{
+T 0 500 5 10 0 0 0 0 1
+pintype=unknown
+T 355 495 5 10 1 1 0 0 1
+pinlabel=P2.1
+T 205 545 5 10 1 1 0 6 1
+pinnumber=9
+T 0 500 5 10 0 0 0 0 1
+pinseq=9
+}
+P 0 200 300 200 1 0 0
+{
+T 0 200 5 10 0 0 0 0 1
+pintype=unknown
+T 355 195 5 10 1 1 0 0 1
+pinlabel=P2.2
+T 205 245 5 10 1 1 0 6 1
+pinnumber=10
+T 0 200 5 10 0 0 0 0 1
+pinseq=10
+}
+P 8300 200 8000 200 1 0 0
+{
+T 8300 200 5 10 0 0 0 6 1
+pintype=unknown
+T 7945 195 5 10 1 1 0 6 1
+pinlabel=P2.3
+T 8095 245 5 10 1 1 0 0 1
+pinnumber=11
+T 8300 200 5 10 0 0 0 6 1
+pinseq=11
+}
+P 8300 500 8000 500 1 0 0
+{
+T 8300 500 5 10 0 0 0 6 1
+pintype=unknown
+T 7945 495 5 10 1 1 0 6 1
+pinlabel=P2.4
+T 8095 545 5 10 1 1 0 0 1
+pinnumber=12
+T 8300 500 5 10 0 0 0 6 1
+pinseq=12
+}
+P 8300 800 8000 800 1 0 0
+{
+T 8300 800 5 10 0 0 0 6 1
+pintype=unknown
+T 7945 795 5 10 1 1 0 6 1
+pinlabel=P2.5
+T 8095 845 5 10 1 1 0 0 1
+pinnumber=13
+T 8300 800 5 10 0 0 0 6 1
+pinseq=13
+}
+P 8300 1100 8000 1100 1 0 0
+{
+T 8300 1100 5 10 0 0 0 6 1
+pintype=unknown
+T 7945 1095 5 10 1 1 0 6 1
+pinlabel=P1.6/TA0.1/SDO/SCL/A6/CA6/TDI/TCLK
+T 8095 1145 5 10 1 1 0 0 1
+pinnumber=14
+T 8300 1100 5 10 0 0 0 6 1
+pinseq=14
+}
+P 8300 1400 8000 1400 1 0 0
+{
+T 8300 1400 5 10 0 0 0 6 1
+pintype=unknown
+T 7945 1395 5 10 1 1 0 6 1
+pinlabel=P1.7/SDI/SDA/CAOUT/A7/CA7/TDO/TDI
+T 8095 1445 5 10 1 1 0 0 1
+pinnumber=15
+T 8300 1400 5 10 0 0 0 6 1
+pinseq=15
+}
+P 8300 1700 8000 1700 1 0 0
+{
+T 8300 1700 5 10 0 0 0 6 1
+pintype=unknown
+T 7945 1695 5 10 1 1 0 6 1
+pinlabel=RST/NMI/SBWTDIO
+T 8095 1745 5 10 1 1 0 0 1
+pinnumber=16
+T 8300 1700 5 10 0 0 0 6 1
+pinseq=16
+}
+P 8300 2000 8000 2000 1 0 0
+{
+T 8300 2000 5 10 0 0 0 6 1
+pintype=unknown
+T 7945 1995 5 10 1 1 0 6 1
+pinlabel=TEST/SBWTCK
+T 8095 2045 5 10 1 1 0 0 1
+pinnumber=17
+T 8300 2000 5 10 0 0 0 6 1
+pinseq=17
+}
+P 8300 2300 8000 2300 1 0 0
+{
+T 8300 2300 5 10 0 0 0 6 1
+pintype=unknown
+T 7945 2295 5 10 1 1 0 6 1
+pinlabel=XOUT/P2.7
+T 8095 2345 5 10 1 1 0 0 1
+pinnumber=18
+T 8300 2300 5 10 0 0 0 6 1
+pinseq=18
+}
+P 8300 2600 8000 2600 1 0 0
+{
+T 8300 2600 5 10 0 0 0 6 1
+pintype=unknown
+T 7945 2595 5 10 1 1 0 6 1
+pinlabel=XIN/P2.6/TA0.1
+T 8095 2645 5 10 1 1 0 0 1
+pinnumber=19
+T 8300 2600 5 10 0 0 0 6 1
+pinseq=19
+}
+P 8300 2900 8000 2900 1 0 0
+{
+T 8300 2900 5 10 0 0 0 6 1
+pintype=unknown
+T 7945 2895 5 10 1 1 0 6 1
+pinlabel=DVSS
+T 8095 2945 5 10 1 1 0 0 1
+pinnumber=20
+T 8300 2900 5 10 0 0 0 6 1
+pinseq=20
+}
+B 300 0 7700 3100 3 0 0 0 -1 -1 0 -1 -1 -1 -1 -1
+T 300 3200 8 10 1 1 0 0 1
+device=MSP430G2x52
+T 7800 3200 8 10 1 1 0 0 1
+refdes=U?
+T 300 3400 8 10 0 0 0 0 1
+use-license=unlimited
+T 300 3600 8 10 0 0 0 0 1
+dist-license=GPL 2
+T 300 3800 8 10 0 0 0 0 1
+author=Piotr Wiszowaty pwiszowaty458@gmail.com

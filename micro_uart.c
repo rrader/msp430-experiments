@@ -1,82 +1,147 @@
-/*
-NOTICE
-Used code or got an idea from:
-    UART: Stefan Wendler - http://gpio.kaltpost.de/?page_id=972
-    ADC: http://indiantinker.wordpress.com/2012/12/13/tutorial-using-the-internal-temperature-sensor-on-a-msp430/
-    printf: http://forum.43oh.com/topic/1289-tiny-printf-c-version/
-*/
-
 #include <msp430g2553.h>
 
-// =========== HEADERS ===============
-// UART
+#define A6 BIT6
+
+
+//UART.h
+
+/**
+* Initialize soft UART
+*/
 void uart_init(void);
+
+/**
+* Set pointer for ISR to call when data was received.
+*
+* @param[in] *isr_ptr pointer to ISR
+*/
 void uart_set_rx_isr_ptr(void (*isr_ptr)(unsigned char c));
+
+/**
+* Read one character from UART blocking.
+*
+* @return character received
+*/
 unsigned char uart_getc();
+
+/**
+* Write one chracter to the UART blocking.
+*
+* @param[in] *c the character to write
+*/
 void uart_putc(unsigned char c);
+
+/**
+* Write string to the UART blocking.
+*
+* @param[in] *str the 0 terminated string to write
+*/
 void uart_puts(const char *str);
-void uart_printf(char *, ...);
-// ADC
-void ADC_init(void);
-// =========== /HEADERS ===============
 
 
-// Trigger on received character
+void ADC_init(void) {
+            // Используем Vcc/Vss(аналоговая земля) для верхнего/нижнего ИОН,
+            // 16 x ADC10CLKs (выборка за 16 тактов), включаем АЦП.
+    ADC10CTL0 = SREF_0 + ADC10SHT_0 + ADC10ON;
+            // Вход A1, делитель ADC10CLK на 1, одноканальный режим.  
+    ADC10CTL1 = INCH_6 + SHS_0 + ADC10SSEL_0 + ADC10DIV_0 + CONSEQ_0;
+    ADC10AE0 = A6;      // Разрешаем вход АЦП на порту P1.1
+    
+    ADC10CTL0 |= ENC;     // Разрешаем преобразования.
+} // ADC_init
+
+//uart_PRINTF.h
+void uart_printf(char *, ...);                 // uart_printf() output pointed to UART through putc()
+
+//MY APP
+
 void uart_rx_isr(unsigned char c) {
-  P1OUT ^= 0x40;
+  // uart_putc(c);
+  P1OUT ^= 0x40;  // toggle P1.0 (red led)
+}
+
+int tempOut()
+{
+    int t=0;
+    __delay_cycles(1000);              //wait 4 ref to settle
+    ADC10CTL0 |= ENC + ADC10SC;      //enable conversion and start conversion
+    while(ADC10CTL1 & BUSY);         //wait..i am converting..pum..pum..
+    t=ADC10MEM;                       //store val in t
+    ADC10CTL0&=~ENC;                     //disable adc conv
+    return t; //convert and pass
 }
 
 int main(void)
 {
   WDTCTL = WDTPW + WDTHOLD;
   
-  BCSCTL1 = CALBC1_8MHZ; //Set DCO to 8Mhz
-  DCOCTL = CALDCO_8MHZ; //Set DCO to 8Mhz
+    BCSCTL1 = CALBC1_8MHZ; //Set DCO to 8Mhz
+    DCOCTL = CALDCO_8MHZ; //Set DCO to 8Mhz
   
   P1DIR = 0xff;
   P1OUT = 0x1;
-  ADC_init();
+  ADC_init(); // !!!!!!
   uart_init();
   uart_set_rx_isr_ptr(uart_rx_isr);
 
   __bis_SR_register(GIE); // global interrupt enable
 
-  // UART Handshake...
   unsigned char c;
   while ((c = uart_getc()) != '1');
   uart_puts((char *)"\nOK\n");
 
+  volatile unsigned long i = 5000;
+  int max = 0;
+
   ADC10CTL0 |= ADC10SC;
   while(1) {
-    uart_printf("%i\n", getTemperatureCelsius());
+    uart_printf("%i\n", tempOut());
     P1OUT ^= 0x1;
   } 
 }
 
-// ========================================================
-// ADC configured to read temperature
-void ADC_init(void) {
-    ADC10CTL0 = SREF_1 + REFON + ADC10ON + ADC10SHT_3;
-    ADC10CTL1 = INCH_10 + ADC10DIV_3;
-}
-
-int getTemperatureCelsius()
-{
-    int t = 0;
-    __delay_cycles(1000);
-    ADC10CTL0 |= ENC + ADC10SC;
-    while (ADC10CTL1 & BUSY);
-    t = ADC10MEM;
-    ADC10CTL0 &=~ ENC;
-    return(int) ((t * 27069L - 18169625L) >> 16);
-}
 
 
-// ========================================================
-// UART
+
+
+/*
+* This file is part of the MSP430 hardware UART example.
+*
+* Copyright (C) 2012 Stefan Wendler <sw@kaltpost.de>
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/******************************************************************************
+* Hardware UART example for MSP430.
+*
+* Stefan Wendler
+* sw@kaltpost.de
+* http://gpio.kaltpost.de
+******************************************************************************/
+
+#include <msp430.h>
 #include <legacymsp430.h>
 
+/**
+* Receive Data (RXD) at P1.1
+*/
 #define RXD BIT1
+
+/**
+* Transmit Data (TXD) at P1.2
+*/
 #define TXD BIT2
 
 /**
@@ -131,9 +196,14 @@ interrupt(USCIAB0RX_VECTOR) USCI0RX_ISR(void)
 
 
 
-// ========================================================
-// UART PRINTF
+
+/// uart_PRINTF
+
+#include "msp430g2231.h"
 #include "stdarg.h"
+
+// void uart_putc(unsigned char);
+// void uart_puts(char *);
 
 static const unsigned long dv[] = {
 //  4294967296      // 32 bit unsigned max
