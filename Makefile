@@ -1,6 +1,9 @@
 blink.o: blink.c
 	msp430-gcc -mmcu=msp430g2553 blink.c -o blink.o
 
+uart_sim900-2.o: uart_sim900-2.c
+	msp430-gcc -mmcu=msp430g2553 uart_sim900-2.c -o uart_sim900-2.o
+
 micro.o: micro.c
 	msp430-gcc -mmcu=msp430g2553 micro.c -o micro.o
 

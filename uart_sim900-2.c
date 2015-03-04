@@ -42,64 +42,110 @@ void uart_puts(const char *str);
 void ADC_init(void) {
             // Используем Vcc/Vss(аналоговая земля) для верхнего/нижнего ИОН,
             // 16 x ADC10CLKs (выборка за 16 тактов), включаем АЦП.
-    ADC10CTL0 = SREF_1 + REFON + ADC10ON + ADC10SHT_0 + ADC10SR;
-    // ADC10CTL0 = SREF_0 + ADC10SHT_0 + ADC10ON;
+    ADC10CTL0 = SREF_0 + ADC10SHT_0 + ADC10ON;
             // Вход A1, делитель ADC10CLK на 1, одноканальный режим.  
-    ADC10CTL1 = INCH_6 + ADC10DIV_0;
-    // ADC10CTL1 = INCH_6 + SHS_0 + ADC10SSEL_0 + ADC10DIV_0 + CONSEQ_0;
+    ADC10CTL1 = INCH_6 + SHS_0 + ADC10SSEL_0 + ADC10DIV_0 + CONSEQ_0;
     ADC10AE0 = A6;      // Разрешаем вход АЦП на порту P1.1
     
     ADC10CTL0 |= ENC;     // Разрешаем преобразования.
 } // ADC_init
+
+int micro = 0;
+
+int addValue(int newValue) {
+  // micro = micro + 0.9 * (newValue - micro);
+  micro = newValue;
+}
 
 //uart_PRINTF.h
 void uart_printf(char *, ...);                 // uart_printf() output pointed to UART through putc()
 
 //MY APP
 
-void uart_rx_isr(unsigned char c) {
-  // uart_putc(c);
-  P1OUT ^= 0x40;  // toggle P1.0 (red led)
-}
+#define MAX 0xff
+#define MIN 0x00
 
-int tempOut()
-{
-    int t=0;
-    __delay_cycles(1000);              //wait 4 ref to settle
-    ADC10CTL0 |= ENC + ADC10SC;      //enable conversion and start conversion
-    while(ADC10CTL1 & BUSY);         //wait..i am converting..pum..pum..
-    t=ADC10MEM;                       //store val in t
-    ADC10CTL0&=~ENC;                     //disable adc conv
-    return t; //convert and pass
+
+void uart_rx_isr(unsigned char c) {
+  uart_putc(c);
+  P1OUT ^= 0x20;  // toggle P1.0 (red led)
 }
 
 int main(void)
 {
   WDTCTL = WDTPW + WDTHOLD;
   
-    BCSCTL1 = CALBC1_8MHZ; //Set DCO to 8Mhz
-    DCOCTL = CALDCO_8MHZ; //Set DCO to 8Mhz
+  BCSCTL1 = CALBC1_1MHZ; // Set DCO
+  DCOCTL = CALDCO_1MHZ;
   
-  P1DIR = 0xff;
-  P1OUT = 0x1;
-  ADC_init(); // !!!!!!
+  P1DIR = 0xf9;
+  P1OUT = 0x00;
+  // ADC_init(); // !!!!!!
   uart_init();
   uart_set_rx_isr_ptr(uart_rx_isr);
 
   __bis_SR_register(GIE); // global interrupt enable
 
   unsigned char c;
-  while ((c = uart_getc()) != '1');
-  uart_puts((char *)"\nOK\n");
-
-  volatile unsigned long i = 5000;
-  int max = 0;
+  // while ((c = uart_getc()) != '1');
+  uart_puts((char *)"AT\n");
+  P1OUT ^= 0x40;
 
   ADC10CTL0 |= ADC10SC;
-  while(1) {
-    uart_printf("%i\n", tempOut());
-    P1OUT ^= 0x1;
-  } 
+  // while(1) {
+    c = uart_getc();
+    // uart_printf("%i\n", getTemperatureCelsius());
+    P1OUT ^= 0x80;
+  // } 
+
+  // int n;
+  // int prev = 0;
+  // while (1)
+  // {
+  //   ADC10CTL0 |= ADC10SC;   // начинаем новое преобразование
+  //   while ((ADC10CTL1 & ADC10BUSY) == 0x01); // ждем, когда преобразование закончится
+  //   // if (ADC10MEM < prev) {
+  //     // n = 0x00;
+  //     // addValue(ADC10MEM);
+  //     // if (micro >= MIN)
+  //     //   n |= 0x10;
+  //     // if (micro >= MIN + (MAX-MIN)/5)
+  //     //   n |= 0x08;
+  //     // if (micro >= MIN + (MAX-MIN)/5*2)
+  //     //   n |= 0x80;
+  //     // if (micro >= MIN + (MAX-MIN)/5*3)
+  //     //   n |= 0x01;
+  //     // if (micro >= MIN + (MAX-MIN)/5*4)
+  //     //   n |= 0x20;
+  //     // P1OUT = n;
+  //   // }
+  //   prev = ADC10MEM;
+  // }
+
+  // volatile unsigned long i = 5000;
+  // int max = 0;
+
+  // ADC10CTL0 |= ADC10SC;
+  // while(1) {
+  //   if ((ADC10CTL1 & ADC10BUSY) != 0x01) {
+  //     // uart_puts((char *)"MSP430 harduart\n\r");
+  //     // uart_printf("ADC %x\r\n", ADC10MEM);
+  //     ADC10CTL0 |= ADC10SC;
+  //   }
+
+  //   if (i == 0) {
+  //     P1OUT ^= 0x80; // Toggle P1.6 output (green LED) using exclusive-OR
+  //     i = 5000; // Delay
+  //     uart_printf("ADC %x\r\n", max);
+  //     max = 0;
+  //   }
+  //   i--;
+  //   if (ADC10MEM > max)
+  //     max = ADC10MEM;
+
+  //   // do (i--); // busy waiting (bad)
+  //   // while (i != 0);
+  // } 
 }
 
 
@@ -156,15 +202,13 @@ void uart_init(void)
   uart_set_rx_isr_ptr(0L);
 
   P1SEL = RXD + TXD;
-  P1SEL2 = RXD + TXD;
-
-  UCA0CTL1 |= UCSSEL_2; //SMCLK
-  //8,000,000Hz, 9600Baud, UCBRx=52, UCBRSx=0, UCBRFx=1
-  UCA0BR0 = 52; //8MHz, OSC16, 9600
-  UCA0BR1 = 0; //((8MHz/9600)/16) = 52.08333
-  UCA0MCTL = 0x10|UCOS16; //UCBRFx=1,UCBRSx=0, UCOS16=1
-  UCA0CTL1 &= ~UCSWRST; //USCI state machine
-  IE2 |= UCA0RXIE; // Enable USCI_A0 RX interrupt
+     P1SEL2 = RXD + TXD;
+     UCA0CTL1 |= UCSSEL_2; // SMCLK
+     UCA0BR0 = 130; // 1MHz 9600
+     UCA0BR1 = 6; // 1MHz 9600
+     UCA0MCTL = UCBRS2 + UCBRS1; // Modulation UCBRSx = 1
+     UCA0CTL1 &= ~UCSWRST; // Initialize USCI state machine
+     IE2 |= UCA0RXIE; // Enable USCI_A0 RX interrupt
 }
 
 void uart_set_rx_isr_ptr(void (*isr_ptr)(unsigned char c))
