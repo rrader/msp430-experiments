@@ -17,6 +17,7 @@ void setup() {
   pinMode(P2_1, OUTPUT);
 
   pinMode(BEEP_OUTPUT, OUTPUT);
+  digitalWrite(BEEP_OUTPUT, LOW);
   
   PasswordStorage::readPassword();
 
