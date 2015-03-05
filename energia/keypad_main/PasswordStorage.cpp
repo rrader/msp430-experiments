@@ -1,5 +1,6 @@
 #include <Energia.h>
 #include "../../libraries/MspFlash/MspFlash.h"
+#include "PasswordStorage.h"
 
 #define flash SEGMENT_D
 
@@ -9,6 +10,10 @@ namespace PasswordStorage{
   
   unsigned char currentPassword[10];  // current password
   unsigned char superPassword[] = "42AB91$";
+
+  void setup() {
+    readPassword();
+  }
   
   void readPassword() {
     Flash.read(flash, currentPassword, 10);

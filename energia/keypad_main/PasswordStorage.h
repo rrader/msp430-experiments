@@ -4,6 +4,8 @@
 
 
 namespace PasswordStorage {
+  void setup();
+
   void readPassword();
   void resetPasswordToDefault();
   void saveNewPassword(unsigned char* newPassword, unsigned int len);
