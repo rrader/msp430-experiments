@@ -8,7 +8,7 @@
 namespace PasswordStorage{
   unsigned const int PASSWORD_LENGTH = 10;
   
-  unsigned char currentPassword[10];  // current password
+  unsigned char currentPassword[PASSWORD_LENGTH];  // current password
   unsigned char superPassword[] = "42AB91$";
 
   void setup() {
@@ -16,7 +16,7 @@ namespace PasswordStorage{
   }
   
   void readPassword() {
-    Flash.read(flash, currentPassword, 10);
+    Flash.read(flash, currentPassword, PASSWORD_LENGTH);
   }
 
   void resetPasswordToDefault() {
